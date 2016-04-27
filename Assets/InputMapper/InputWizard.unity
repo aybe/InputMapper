@@ -167,8 +167,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Press a device button to assign.
 
-    <size=14>(tip: pressing ''Delete'' key or ''Cancel'' button on a command clears
-    its bindings)</size>'
+    <size=14>(tip: pressing ''Cancel'' key or button on a command will clear its bindings)</size>'
 --- !u!222 &253622723
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -404,6 +403,7 @@ Canvas:
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0

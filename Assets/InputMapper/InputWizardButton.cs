@@ -141,7 +141,7 @@ namespace Assets.InputMapper
         {
             var o = _eventSystem.currentSelectedGameObject;
             if (o == null || o != gameObject) return;
-            if (!Input.GetKeyDown(KeyCode.Delete) && !Input.GetButtonDown("Cancel")) return;
+            if (!Input.GetButtonDown("Cancel")) return;
             var buttonIndex = _targetCommand.GetButtonIndex(_targetButton);
             var buttons = _targetCommand.Buttons[buttonIndex];
             buttons.Clear();

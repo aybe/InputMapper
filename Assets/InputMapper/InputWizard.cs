@@ -4,6 +4,8 @@ using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Assets.InputMapper
 {
@@ -12,7 +14,36 @@ namespace Assets.InputMapper
     /// </summary>
     public sealed class InputWizard : MonoBehaviour
     {
-        #region Fields
+        #region Public properties
+
+        /// <summary>
+        ///     Gets or sets the input configuration to use.
+        /// </summary>
+        public static InputConfiguration Configuration { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the set of devices to listen to.
+        /// </summary>
+        public static HashSet<IDevice> Devices { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the prefab to use for command buttons.
+        /// </summary>
+        public static GameObject PrefabButton { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the prefab to use for exit button.
+        /// </summary>
+        public static GameObject PrefabExit { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the scene to return to.
+        /// </summary>
+        public static string Scene { get; set; }
+
+        #endregion
+
+        #region Private fields
 
         private EventSystem _eventSystem;
         private GameObject _panelButtons;
@@ -36,6 +67,12 @@ namespace Assets.InputMapper
         }
 
         [UsedImplicitly]
+        public void Start()
+        {
+            Configure();
+        }
+
+        [UsedImplicitly]
         public void Update()
         {
             UpdateSelection();
@@ -48,39 +85,45 @@ namespace Assets.InputMapper
         /// <summary>
         ///     Configures this instance.
         /// </summary>
-        /// <param name="devices">Device store to use for listening to input events.</param>
-        /// <param name="configuration">Input configuration to map inputs to.</param>
-        /// <param name="prefab">Prefab button to use for presenting command buttons.</param>
-        public void Configure([NotNull] HashSet<IDevice> devices, [NotNull] InputConfiguration configuration,
-            [NotNull] GameObject prefab)
+        private void Configure()
         {
-            if (devices == null) throw new ArgumentNullException("devices");
-            if (configuration == null) throw new ArgumentNullException("configuration");
-            if (prefab == null) throw new ArgumentNullException("prefab");
+            if (Devices == null) throw new InvalidOperationException("Devices property not set.");
+            if (Configuration == null) throw new InvalidOperationException("Configuration property not set.");
+            if (PrefabButton == null) throw new InvalidOperationException("PrefabButton property not set.");
+            if (PrefabExit == null) throw new InvalidOperationException("PrefabExit property not set.");
+            if (Scene == null) throw new InvalidOperationException("Scene property not set.");
 
             // clean-up previous session
             var transforms = _panelButtons.transform.Cast<Transform>().ToList();
             transforms.ForEach(s => DestroyImmediate(s.gameObject));
 
             // create a UI element for each command button
-            foreach (var command in configuration.Commands)
+            foreach (var command in Configuration.Commands)
             {
                 foreach (var label in command.Labels)
                 {
-                    // clone and add our prefab
-                    var o = Instantiate(prefab);
+                    // clone/add prefab
+                    var o = Instantiate(PrefabButton);
                     o.name = string.Format("ButtonCommand{0}{1}", command.Name, label);
                     o.transform.SetParent(_panelButtons.transform, false);
 
-                    // setup our scanner !
+                    // setup command button
                     var button = o.AddComponent<InputWizardButton>();
-                    button.Setup(this, devices, command, label);
+                    button.Setup(this, Devices, command, label);
                 }
             }
+
+            // configure exit button
+            var exit = PrefabExit;
+            exit.name = "ButtonExit";
+            exit.transform.SetParent(_panelButtons.transform, false);
+            exit.GetComponent<Button>()
+                .onClick.AddListener(() => { SceneManager.LoadSceneAsync(Scene, LoadSceneMode.Single); });
 
             // initialize UI
             SetPopupVisibility(false);
         }
+
 
         /// <summary>
         ///     Sets the visibility of the panel that asks for user input.
