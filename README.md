@@ -11,3 +11,7 @@
 ## Notes
 - due to changes in Unity's scene management, you might have to adjust a few things to your needs
 - this is a free and open source project, feel free to fork, improve and PR !
+
+## Showcase
+![](https://raw.githubusercontent.com/aybe/InputMapper/master/sample1.png)
+![](https://raw.githubusercontent.com/aybe/InputMapper/master/sample2.png)
