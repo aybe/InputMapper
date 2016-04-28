@@ -51,7 +51,7 @@ namespace Assets.InputMapper
             InputWizard.PrefabButton = prefabButton;
 
             var prefabExit = Instantiate(prefabButton);
-            DontDestroyOnLoad(prefabExit); // awkard Unity ...
+            DontDestroyOnLoad(prefabExit); // keep this alive as scene will be unloaded
             prefabExit.GetComponentInChildren<Text>().text = "Return to menu";
             prefabExit.GetComponent<Button>().colors = new ColorBlock // red button
             {
